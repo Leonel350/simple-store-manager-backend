@@ -26,12 +26,7 @@ class SalesRoutes {
          productData = sale.frozenProduct;
       } else {
          const date = new Date();
-         dateString =
-            date.getFullYear() +
-            "-" +
-            (date.getMonth() + 1) +
-            "-" +
-            date.getDate();
+         dateString = date.toISOString();
          productData = await Product.findOne(product);
          if (!productData) {
             return res
@@ -85,7 +80,22 @@ class SalesRoutes {
       }
    }
 
+   async getLastSales(req: Request, res: Response) {
+      const sales = await Sales.find();
+      const lastSales = sales.sort(function (a: any, b: any) {
+         if (a.date > b.date) {
+            return -1;
+         }
+         if (a.date < b.date) {
+            return 1;
+         }
+         return 0;
+      });
+      res.json(lastSales.slice(0,3));
+   }
+
    routes() {
+      this.router.get("/last", this.getLastSales);
       this.router.post(
          "/",
          [body("product").not().isEmpty(), body("quantity").not().isEmpty()],

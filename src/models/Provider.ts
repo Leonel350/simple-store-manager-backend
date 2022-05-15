@@ -70,6 +70,7 @@ export default class Provider {
          );
          return newProvider;
       }
+      return null;
    }
 
    public static async find() {
